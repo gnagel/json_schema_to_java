@@ -1,3 +1,6 @@
+require 'active_support/inflections'
+require 'active_support/inflector/methods'
+
 module Json
   module Attributes
 
@@ -9,31 +12,42 @@ module Json
   
       def initialize(opts)
         opts.requires_keys_are_not_nil(:name, :type)
-        opts[:required] = false unless opts.key?(:required)
-        opts[:default]  = false unless opts.key?(:default)
 
-        @name     = opts[:name]
-        @type     = opts[:type]
-        @required = opts[:required]
-        @default  = opts[:default]
+        @name            = ActiveSupport::Inflector.camelize(opts[:name], true)
+        @name_underscore = ActiveSupport::Inflector.underscore(name)
+        @name_camelize   = ActiveSupport::Inflector.camelize(name, true)
+
+        @type            = Json::TypeMapper.map(opts[:type])
+        @required        = opts[:required]
+        @default         = opts[:default]
       end
   
       def to_java
         raise "Not implemented"
       end
       
+      def member_variable
+        "private #{@type} #{@name_underscore} = null;"
+      end
+      
       def getter
-        raise "Not implemented"
+        "public final #{@type} get#{@name_camelize}() { return null != this.#{@name_underscore} ? this.#{@name_underscore} : get#{@name_camelize}Default(); }"
       end
       
       def setter
-        raise "Not implemented"
+        "public final #{@type} set#{@name_camelize}(#{@type} _#{@name_underscore}) { return this.#{@name_underscore} = _#{@name_underscore}; }"
       end
       
       def default
-        raise "Not implemented"
+        return "public final #{@type} get#{@name_camelize}Default() { return null; }" if @default.nil?
+
+        case @type
+        when 'String'
+          "public final #{@type} get#{@name_camelize}Default() { return \"#{@default}\"; }"
+        else
+          "public final #{@type} get#{@name_camelize}Default() { return #{@default}; }"
+        end
       end
-  
     end
 
   end
