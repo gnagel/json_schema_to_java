@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   # System
   gem.add_dependency('require_all')
   gem.add_dependency('hash_plus', '>= 1.3')
+  gem.add_dependency('activesupport')
 
   gem.add_development_dependency('rspec')
   gem.add_development_dependency('rspec-expectations')
