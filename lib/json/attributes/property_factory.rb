@@ -23,7 +23,12 @@ module Json
       end
   
       def to_java
-        raise "Not implemented"
+        [
+          member_variable,
+          default,
+          getter,
+          setter
+        ].join("\n")
       end
       
       def member_variable
