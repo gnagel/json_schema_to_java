@@ -21,6 +21,18 @@ module Json
       def to_java
         raise "Not implemented"
       end
+      
+      def getter
+        raise "Not implemented"
+      end
+      
+      def setter
+        raise "Not implemented"
+      end
+      
+      def default
+        raise "Not implemented"
+      end
   
     end
 

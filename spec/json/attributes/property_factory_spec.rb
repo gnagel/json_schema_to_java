@@ -15,10 +15,12 @@ describe Json::Attributes::PropertyFactory do
   end
   
   
-  describe "builds getter and setters" do
+  describe "builds getter, setter, and defaults" do
     before(:each) { @factory = create(name: 'car', type: 'string', required: false, default: 'Subaru') }
     
-    it { expect{ @factory.getter }.to =~ /public final String getCar() { return null != this.car ? this.car : "Subaru"; }/ }
+    it { @factory.default.should match /public final String getCarDefault() { return "Subaru"; }/ }
+    it { @factory.getter.should  match /public final String getCar() { return null != this.car ? this.car : getCarDefault(); }/ }
+    it { @factory.setter.should  match /public final String setCar(String _car) { return this.car = _car; }/ }
   end
   
 end
