@@ -11,4 +11,6 @@ describe Json::TypeMapper do
   it { Json::TypeMapper.map('string').should eq 'String' }
   it { Json::TypeMapper.map('random_class_name').should eq 'RandomClassName' }
   
+  it { Json::TypeMapper.parse(type: 'array', items: { "$ref" => "file:///SampleClass.schema.json#SampleClass" }).should eq 'ArrayList<SampleClass>' }
+  
 end

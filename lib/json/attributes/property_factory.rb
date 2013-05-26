@@ -1,5 +1,6 @@
 require 'active_support/inflections'
 require 'active_support/inflector/methods'
+require 'uri'
 
 module Json
   module Attributes
@@ -17,7 +18,7 @@ module Json
         @name_underscore = ActiveSupport::Inflector.underscore(name)
         @name_camelize   = ActiveSupport::Inflector.camelize(name, true)
 
-        @type            = Json::TypeMapper.map(opts[:type])
+        @type            = Json::TypeMapper.parse(opts)
         @required        = opts[:required]
         @default         = opts[:default]
       end

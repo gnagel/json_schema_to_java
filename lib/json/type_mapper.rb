@@ -3,6 +3,12 @@ require 'active_support/inflector/methods'
 
 module Json
   class TypeMapper
+    def self.parse(opts)
+      value  = map(opts[:type])
+      value += "<#{ URI.parse(opts[:items]['$ref']).fragment }>" if value === 'ArrayList'
+      value
+    end
+    
     def self.map(value) 
       raise ArgumentError, "Invalid input value" if value.blank?
       
