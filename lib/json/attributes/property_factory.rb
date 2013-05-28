@@ -33,7 +33,11 @@ module Json
       end
       
       def member_variable
-        "private #{@type} #{@name_underscore} = null;"
+        "@DatabaseField#{@required ? '(index = true)' : ''} private #{@type} #{@name_underscore} = null;"
+      end
+      
+      def build_method_signature(prefix, postfix, arguments = [], body)
+        "public final #{@type} #{prefix}#{@name_camelize}#{postfix}(#{arguments.join(', ')}) { #{body} }"
       end
       
       def getter

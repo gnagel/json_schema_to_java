@@ -17,11 +17,11 @@ describe Json::Attributes::PropertyFactory do
   
   describe "build member variable" do
     it { 
-      create(name: 'car', type: 'string').member_variable.should eq 'private String car = null;'
+      create(name: 'car', type: 'string').member_variable.should eq '@DatabaseField private String car = null;'
     }
     
     it { 
-      create(name: 'address', type: 'address_wrapper').member_variable.should eq 'private AddressWrapper address = null;'
+      create(name: 'address', type: 'address_wrapper').member_variable.should eq '@DatabaseField private AddressWrapper address = null;'
     }
   end
 
