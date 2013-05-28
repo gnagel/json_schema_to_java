@@ -9,7 +9,29 @@ module Json
       attr_accessor :name
       attr_accessor :type
       attr_accessor :required
-      attr_accessor :default
+      attr_accessor :default_value
+      
+      def self.create_from_properties(properties)
+        properties.collect{ |key, property| create_from_property(key, property) }
+      end
+      
+      
+      def self.create_from_property(key, property)
+        ## Example:
+        # "first": {
+        #   "type":"string",
+        #   "id": "http://jsonschema.net/first",
+        #   "default": "Rae",
+        #   "required":false
+        # },
+        
+        property.symbolize_keys_recursively!
+        property.requires_keys_are_not_nil(:type, :id, :required)
+        property.requires_keys_are_present(:default)
+        
+        self.new(property.merge(name: key))
+      end
+        
   
       def initialize(opts)
         opts.requires_keys_are_not_nil(:name, :type)
@@ -20,7 +42,7 @@ module Json
 
         @type            = Json::TypeMapper.parse(opts)
         @required        = opts[:required]
-        @default         = opts[:default]
+        @default_value   = opts[:default]
       end
   
       def to_java
@@ -59,13 +81,13 @@ module Json
       end
       
       def default
-        return "public final #{@type} get#{@name_camelize}Default() { return null; }" if @default.nil?
+        return "public final #{@type} get#{@name_camelize}Default() { return null; }" if @default_value.nil?
 
         case @type
         when 'String'
-          "public final #{@type} get#{@name_camelize}Default() { return \"#{@default}\"; }"
+          "public final #{@type} get#{@name_camelize}Default() { return \"#{@default_value}\"; }"
         else
-          "public final #{@type} get#{@name_camelize}Default() { return #{@default}; }"
+          "public final #{@type} get#{@name_camelize}Default() { return #{@default_value}; }"
         end
       end
     end

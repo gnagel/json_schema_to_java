@@ -1,4 +1,5 @@
 require_relative '../../spec_helper.rb'
+require 'json'
 
 describe Json::Attributes::PropertyFactory do
   # Shorthand for creating the factorys
@@ -26,21 +27,15 @@ describe Json::Attributes::PropertyFactory do
   let(:address_with_default) { address.merge(default: 'AddressWrapper.defaultValue()') }
   let(:address_is_required_with_default) { address.merge(required: true, default: 'AddressWrapper.defaultValue()') }
   
-  def member_variable(opts = {})
-    create(opts).member_variable
+  def member_variable(opts); create(opts).member_variable; end
+  def getter(opts); create(opts).getter; end
+  def setter(opts); create(opts).setter; end
+  def default(opts); create(opts).default; end
+
+  def method_signature(type, name, arguments, body)
+    "public final #{type} #{name}(#{arguments.join(', ')}) { #{body}; }"
   end
-  
-  def getter(opts = {})
-    create(opts).getter
-  end
-  
-  def setter(opts = {})
-    create(opts).setter
-  end
-  
-  def default(opts = {})
-    create(opts).default
-  end
+
   
   describe "new raises ArgumentError with insufficient inputs" do
     it { expect{ create() }.to raise_error ArgumentError}
@@ -76,10 +71,6 @@ describe Json::Attributes::PropertyFactory do
     end
   end
 
-
-  def method_signature(type, name, arguments, body)
-    "public final #{type} #{name}(#{arguments.join(', ')}) { #{body}; }"
-  end
   
   describe "getter" do
     it { getter(car).should === method_signature('String', 'getCar', [], 'return null != this.car ? this.car : getCarDefault()') }
@@ -100,4 +91,44 @@ describe Json::Attributes::PropertyFactory do
 
     it { default(car_with_default).should === method_signature('String', 'getCarDefault', [], 'return "Subaru"') }
   end  
+  
+  
+  describe "build factory from JSON Schema" do
+    let(:properties) do
+      JSON.parse(File.read File.expand_path('property_factory_spec_schema.json', File.dirname(__FILE__)))
+    end
+    
+    it "should build single factory" do
+      factory = Json::Attributes::PropertyFactory.create_from_property('first', properties['properties']['first'])
+      factory.name.should === 'First'
+      factory.type.should === 'String'
+      factory.required.should === false
+      factory.default_value.should === 'Rae'
+    end
+    
+    it "should build an array of factories" do
+      factories = Json::Attributes::PropertyFactory.create_from_properties(properties['properties'])
+      factories.should_not be_empty
+      factories.count.should === 3
+
+      factory = factories.select { |factory| factory.name === 'First' }.first
+      factory.name.should === 'First'
+      factory.type.should === 'String'
+      factory.required.should === false
+      factory.default_value.should === 'Rae'
+
+      factory = factories.select { |factory| factory.name === 'Middle' }.first
+      factory.name.should === 'Middle'
+      factory.type.should === 'String'
+      factory.required.should === false
+      factory.default_value.should === 'Ann'
+
+      factory = factories.select { |factory| factory.name === 'Last' }.first
+      factory.name.should === 'Last'
+      factory.type.should === 'String'
+      factory.required.should === false
+      factory.default_value.should === 'Bayus'
+    end
+    
+  end
 end

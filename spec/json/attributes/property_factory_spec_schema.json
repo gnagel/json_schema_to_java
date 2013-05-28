@@ -1,0 +1,26 @@
+{
+	"type":"object",
+	"$schema": "http://json-schema.org/draft-03/schema",
+	"id": "#Name",
+	"required":false,
+	"properties":{
+		"first": {
+			"type":"string",
+			"id": "http://jsonschema.net/first",
+			"default": "Rae",
+			"required":false
+		},
+		"middle": {
+			"type":"string",
+			"id": "http://jsonschema.net/middle",
+			"default": "Ann",
+			"required":false
+		},
+		"last": {
+			"type":"string",
+			"id": "http://jsonschema.net/last",
+			"default": "Bayus",
+			"required":false
+		}
+	}
+}
