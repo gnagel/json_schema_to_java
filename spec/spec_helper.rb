@@ -4,7 +4,7 @@ require 'rspec-expectations'
 require 'benchmark'
 
 $:.push File.expand_path("../lib", File.dirname(__FILE__))
-require 'json/schema_to_java'
+require 'json_schema_to_java'
 
 $spec_root = File.dirname(__FILE__)
 

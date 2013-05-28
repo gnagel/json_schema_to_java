@@ -1,4 +1,7 @@
 # -*- encoding: utf-8 -*-
+$:.push File.expand_path("./lib", __FILE__)
+require "json_schema_to_java"
+
 
 Gem::Specification.new do |gem|
   gem.name          = "json_schema_to_java"

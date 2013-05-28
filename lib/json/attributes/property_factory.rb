@@ -33,7 +33,17 @@ module Json
       end
       
       def member_variable
-        "@DatabaseField#{@required ? '(index = true)' : ''} private #{@type} #{@name_underscore} = null;"
+        options = []
+        
+        # TODO: There are A LOT of attributes we can use here. For now let's keep this simple
+        options << 'index = true'      if @required
+        options << 'canBeNull = false' if @required
+
+        options.sort! # For ease of use, always sort these
+        options_str = ''
+        options_str = "(#{options.join(', ')})" unless options.empty?
+        
+        "@DatabaseField#{options_str} private #{@type} #{@name_underscore} = null;"
       end
       
       def build_method_signature(prefix, postfix, arguments = [], body)
