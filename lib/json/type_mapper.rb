@@ -4,11 +4,10 @@ require 'active_support/inflector/methods'
 module Json
   class TypeMapper
     def self.parse(opts)
-      value  = map(opts[:type])
-      value += "<#{ URI.parse(opts[:items]['$ref']).fragment }>" if value === 'ArrayList'
-      value
+      map(opts[:type])
     end
-    
+
+
     def self.map(value) 
       raise ArgumentError, "Invalid input value" if value.blank?
       
@@ -16,7 +15,8 @@ module Json
       
       case value
       when 'Array'
-        'ArrayList'
+        # TODO I will need to build pluralize'd version of this model
+        ActiveSupport::Inflector.pluralize(value)
       when 'Boolean'
         value
       when 'Integer'
